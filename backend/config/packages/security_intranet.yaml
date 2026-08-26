@@ -1,0 +1,33 @@
+security:
+  providers:
+    usuarios_banco:
+      entity:
+        class: App\Entity\Usuario
+        property: email
+  firewalls:
+    main:
+      lazy: true
+      provider: usuarios_banco
+      user_checker: App\Security\UsuarioAtivoChecker
+      json_login:
+        check_path: /api/v1/auth/login
+        username_path: email
+        password_path: senha
+        failure_handler: App\Security\AutenticacaoFailureHandler
+      login_throttling:
+        max_attempts: 5
+        interval: '1 minute'
+      logout:
+        path: /api/v1/auth/logout
+        target: /api/v1/auth/logout-sucesso
+  access_control:
+    - { path: ^/api/v1/auth/csrf$, roles: PUBLIC_ACCESS }
+    - { path: ^/api/v1/auth/login$, roles: PUBLIC_ACCESS }
+    - { path: ^/api/v1/dashboard, roles: ROLE_USER }
+    - { path: ^/api/v1/publicacoes, roles: ROLE_USER }
+    - { path: ^/api/v1/instituicoes, roles: ROLE_ADMIN }
+    - { path: ^/api/v1/escritorios, roles: ROLE_ADMIN }
+    - { path: ^/api/v1/usuarios, roles: ROLE_ADMIN }
+    - { path: ^/api/v1/tipos-conteudo, roles: ROLE_ADMIN }
+    - { path: ^/api/v1/parametros, roles: ROLE_ADMIN }
+    - { path: ^/api, roles: PUBLIC_ACCESS }

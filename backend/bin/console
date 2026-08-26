@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+
+use App\Kernel;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+
+if (!is_dir(dirname(__DIR__).'/vendor')) {
+    throw new LogicException('Execute "composer install" antes de utilizar o console.');
+}
+
+require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+
+return static function (array $context): Application {
+    $nucleo = new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
+
+    return new Application($nucleo);
+};
+

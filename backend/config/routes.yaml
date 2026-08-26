@@ -1,0 +1,16 @@
+controladores:
+  resource:
+    path: ../src/Controller/
+    namespace: App\Controller
+  type: attribute
+
+documentacao_api:
+  path: /api/documentacao
+  methods: GET
+  defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+
+contrato_api:
+  path: /api/documentacao.json
+  methods: GET
+  defaults: { _controller: nelmio_api_doc.controller.swagger }
+

@@ -1,0 +1,11 @@
+/.env
+/.env.local
+/backend/.env.local
+/backend/vendor/
+/backend/var/
+/frontend/node_modules/
+/frontend/dist/
+/.idea/
+/.vscode/
+*.log
+

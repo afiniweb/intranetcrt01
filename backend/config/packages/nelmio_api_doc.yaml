@@ -1,0 +1,11 @@
+nelmio_api_doc:
+  documentation:
+    info:
+      title: Intranet - CRT-01
+      description: API REST para comunicação institucional
+      version: 0.1.0
+  areas:
+    default:
+      path_patterns:
+        - ^/api/v1
+

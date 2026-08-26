@@ -1,0 +1,139 @@
+name: intranet-crt01
+
+services:
+  proxy:
+    image: nginx:1.27-alpine
+    ports:
+      - "${PORTA_HTTP:-8082}:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    networks: [intranet]
+
+  backend:
+    build:
+      context: ./backend
+      target: desenvolvimento
+    environment:
+      APP_ENV: dev
+      APP_SECRET: segredo_apenas_para_desenvolvimento
+      DATABASE_URL: "postgresql://${BANCO_USUARIO:-intranet}:${BANCO_SENHA:-intranet}@postgres:5432/${BANCO_NOME:-intranet}?serverVersion=16&charset=utf8"
+      REDIS_URL: redis://redis:6379
+      ARMAZENAMENTO_ENDPOINT: http://minio:9000
+      ARMAZENAMENTO_USUARIO: "${ARMAZENAMENTO_USUARIO:-intranet}"
+      ARMAZENAMENTO_SENHA: "${ARMAZENAMENTO_SENHA:-intranet_local}"
+    volumes:
+      - ./backend:/aplicacao
+      - dependencias_backend:/aplicacao/vendor
+      - cache_backend:/aplicacao/var
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1:8000/api/v1/health') === false ? 1 : 0);"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 30s
+    networks: [intranet]
+
+  trabalhador:
+    build:
+      context: ./backend
+      target: desenvolvimento
+    command: ["php", "bin/console", "messenger:consume", "assincrono", "--time-limit=3600", "--memory-limit=256M"]
+    environment:
+      APP_ENV: dev
+      APP_SECRET: segredo_apenas_para_desenvolvimento
+      DATABASE_URL: "postgresql://${BANCO_USUARIO:-intranet}:${BANCO_SENHA:-intranet}@postgres:5432/${BANCO_NOME:-intranet}?serverVersion=16&charset=utf8"
+      MESSENGER_TRANSPORT_DSN: redis://redis:6379/mensagens
+    volumes:
+      - ./backend:/aplicacao
+      - dependencias_backend:/aplicacao/vendor
+      - cache_trabalhador:/aplicacao/var
+    depends_on:
+      backend:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [intranet]
+
+  frontend:
+    build:
+      context: ./frontend
+      target: desenvolvimento
+    environment:
+      VITE_URL_API: /api/v1
+    volumes:
+      - ./frontend:/aplicacao
+      - dependencias_frontend:/aplicacao/node_modules
+    networks: [intranet]
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: "${BANCO_NOME:-intranet}"
+      POSTGRES_USER: "${BANCO_USUARIO:-intranet}"
+      POSTGRES_PASSWORD: "${BANCO_SENHA:-intranet}"
+    volumes:
+      - dados_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${BANCO_USUARIO:-intranet} -d ${BANCO_NOME:-intranet}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    networks: [intranet]
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - dados_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    networks: [intranet]
+
+  minio:
+    image: minio/minio:RELEASE.2025-07-23T15-54-02Z
+    command: ["server", "/dados", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: "${ARMAZENAMENTO_USUARIO:-intranet}"
+      MINIO_ROOT_PASSWORD: "${ARMAZENAMENTO_SENHA:-intranet_local}"
+    volumes:
+      - dados_minio:/dados
+    networks: [intranet]
+
+  correio:
+    image: axllent/mailpit:v1.27
+    networks: [intranet]
+
+  antivirus:
+    image: clamav/clamav:1.4
+    volumes:
+      - dados_antivirus:/var/lib/clamav
+    networks: [intranet]
+
+networks:
+  intranet:
+    driver: bridge
+
+volumes:
+  dependencias_backend:
+  dependencias_frontend:
+  cache_backend:
+  cache_trabalhador:
+  dados_postgres:
+  dados_redis:
+  dados_minio:
+  dados_antivirus:
+

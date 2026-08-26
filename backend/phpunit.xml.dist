@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="vendor/autoload.php" colors="true">
+  <php>
+    <server name="APP_ENV" value="test" force="true"/>
+    <server name="APP_SECRET" value="segredo_de_teste" force="true"/>
+
+        <!-- ###+ symfony/framework-bundle ### -->
+        <env name="APP_ENV" value="dev"/>
+        <env name="APP_SECRET" value=""/>
+        <!-- ###- symfony/framework-bundle ### -->
+
+        <!-- ###+ symfony/routing ### -->
+        <!-- Configure how to generate URLs in non-HTTP contexts, such as CLI commands. -->
+        <!-- See https://symfony.com/doc/current/routing.html#generating-urls-in-commands -->
+        <env name="DEFAULT_URI" value="http://localhost"/>
+        <!-- ###- symfony/routing ### -->
+  </php>
+  <testsuites>
+    <testsuite name="Testes da aplicação">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
+
