@@ -2,6 +2,49 @@
 
 Este guia reúne os passos necessários para deixar a Intranet CRT-01 funcional depois de ligar ou reiniciar o computador.
 
+## Retomada rápida após desligar o computador
+
+Estado verificado em 26/08/2026 antes do desligamento:
+
+- os nove serviços do ambiente local estavam ativos;
+- `backend`, `postgres`, `redis` e `antivirus` estavam saudáveis;
+- a home respondia com HTTP 200 em `http://localhost:8082/`;
+- o health check respondia com HTTP 200 em `http://localhost:8082/api/v1/health`;
+- a branch Git `main` estava sincronizada com `origin/main`;
+- o ambiente temporário de produção estava desligado; somente o ambiente local estava ativo.
+
+Antes de desligar o computador, interrompa os containers preservando seus dados e sua configuração:
+
+```bash
+cd /home/jaime/projetos/intranet-crt01
+docker compose stop
+```
+
+Depois de ligar novamente, aguarde o Docker iniciar e execute:
+
+```bash
+cd /home/jaime/projetos/intranet-crt01
+docker compose start
+docker compose ps
+```
+
+Confirme que a aplicação voltou ao mesmo estado:
+
+```bash
+curl -I http://localhost:8082/
+curl -I http://localhost:8082/api/v1/health
+```
+
+Os dois endereços devem responder com `HTTP/1.1 200 OK`. O backend, o PostgreSQL e o Redis devem aparecer como `healthy` no `docker compose ps`. O antivírus pode levar alguns minutos para alcançar esse estado.
+
+Se `docker compose start` informar que algum container não existe, use:
+
+```bash
+docker compose up -d
+```
+
+Não é necessário reconstruir imagens nem reaplicar migrações após um desligamento normal. Use `docker compose up -d --build` somente quando houver mudanças nos Dockerfiles ou quando alguma imagem precisar ser reconstruída. Nunca use `docker compose down -v` para desligar rotineiramente, pois `-v` remove os volumes e apaga os dados locais persistentes.
+
 ## 1. Pré-requisitos
 
 - Docker instalado e com o serviço em execução.
@@ -186,4 +229,3 @@ docker compose stop
 ```
 
 Na próxima utilização, execute `docker compose start` ou novamente `docker compose up -d`.
-
