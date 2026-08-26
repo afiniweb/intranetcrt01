@@ -1,4 +1,5 @@
 /.env
+/.env.prod
 /.env.local
 /backend/.env.local
 /backend/vendor/
@@ -8,4 +9,3 @@
 /.idea/
 /.vscode/
 *.log
-
