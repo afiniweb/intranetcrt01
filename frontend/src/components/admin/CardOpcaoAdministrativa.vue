@@ -5,8 +5,8 @@ defineProps<{ titulo: string; descricao: string; icone: string; cor: string }>()
 const emit = defineEmits<{ selecionar: [] }>()
 </script>
 <template>
-  <Card class="card-opcao-administrativa">
-    <template #header><div class="icone-opcao" :style="{ '--cor-opcao': cor }"><i :class="icone" aria-hidden="true" /></div></template>
+  <Card class="card-opcao-administrativa" :style="{ '--cor-card': cor, '--cor-opcao': cor }">
+    <template #header><div class="icone-opcao"><i :class="icone" aria-hidden="true" /></div></template>
     <template #title>{{ titulo }}</template>
     <template #content><p class="descricao-opcao">{{ descricao }}</p></template>
     <template #footer>
