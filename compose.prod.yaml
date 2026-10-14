@@ -4,7 +4,7 @@ services:
   proxy:
     image: nginx:1.27-alpine
     ports:
-      - "127.0.0.1:${PORTA_HTTP:-8080}:80"
+      - "${IP_BIND:-127.0.0.1}:${PORTA_HTTP:-8080}:80"
     volumes:
       - ./docker/nginx/production.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
@@ -16,6 +16,7 @@ services:
     networks: [intranet]
 
   backend:
+    image: "intranet-crt01-backend:${VERSAO_IMAGEM:-local}"
     build:
       context: ./backend
       target: producao
@@ -43,9 +44,7 @@ services:
     networks: [intranet]
 
   trabalhador:
-    build:
-      context: ./backend
-      target: producao
+    image: "intranet-crt01-backend:${VERSAO_IMAGEM:-local}"
     command: ["php", "bin/console", "messenger:consume", "assincrono", "--time-limit=3600", "--memory-limit=256M"]
     environment:
       APP_ENV: prod
@@ -63,6 +62,7 @@ services:
     networks: [intranet]
 
   frontend:
+    image: "intranet-crt01-frontend:${VERSAO_IMAGEM:-local}"
     build:
       context: ./frontend
       target: producao

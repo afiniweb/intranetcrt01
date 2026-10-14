@@ -9,3 +9,6 @@
 /.idea/
 /.vscode/
 *.log
+/backups/
+/pacote-instalacao/
+/pacote-instalacao.rar

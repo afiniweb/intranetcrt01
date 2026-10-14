@@ -21,3 +21,9 @@ docker compose exec frontend npm run build
 ```
 
 Consulte `docs/estrategia-desenvolvimento.md` para as etapas e convenções do projeto.
+
+## Implantação no servidor da intranet
+
+Use `compose.prod.yaml` para implantação. O procedimento técnico completo está em [docs/guia-ambiente-producao.md](docs/guia-ambiente-producao.md), e o roteiro sequencial para o instalador está em [docs/manual-instalacao-servidor.md](docs/manual-instalacao-servidor.md).
+
+Não use o `compose.yaml` de desenvolvimento no servidor institucional e nunca execute `docker compose down -v` em produção.
