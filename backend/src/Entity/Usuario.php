@@ -14,6 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Index(name: 'idx_usuarios_escritorio', columns: ['escritorio_id'])]
 class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const PERFIL_LEITOR = 'LEITOR';
     public const PERFIL_ADMIN = 'ADMIN';
     public const PERFIL_PUBLICADOR = 'PUBLICADOR';
 
@@ -50,7 +51,7 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function getSenhaHash(): string { return $this->senhaHash; }
     public function getPassword(): string { return $this->senhaHash; }
     public function getUserIdentifier(): string { return $this->email; }
-    public function getRoles(): array { return [$this->perfil === self::PERFIL_ADMIN ? 'ROLE_ADMIN' : 'ROLE_PUBLICADOR', 'ROLE_USER']; }
+    public function getRoles(): array { return match ($this->perfil) { self::PERFIL_ADMIN => ['ROLE_ADMIN', 'ROLE_USER'], self::PERFIL_PUBLICADOR => ['ROLE_PUBLICADOR', 'ROLE_USER'], self::PERFIL_LEITOR => ['ROLE_USER'], default => [] }; }
     public function eraseCredentials(): void {}
     public function getPerfil(): string { return $this->perfil; }
     public function isAdminGlobal(): bool { return $this->adminGlobal; }

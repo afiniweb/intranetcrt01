@@ -1,5 +1,9 @@
 # Resumo das funcionalidades da Intranet CRT-01
 
+## Mensagens institucionais (15/10/2026)
+
+Admins gerenciam avisos por instituição com vigência, ciência obrigatória ou opcional, renovação e exclusão lógica. Todos os perfis recebem pendências antes de acessar os módulos, com espera de 30 segundos validada no servidor. O aceite único preserva o conteúdo apresentado; a dispensa opcional vale para a sessão. A consulta administrativa permite acompanhar ciências mesmo após edição ou exclusão. Veja [regras e API](./mensagens-institucionais.md).
+
 Este documento resume o escopo funcional vigente definido em `requisitos-software.md`. Em caso de divergência entre versões, foram consideradas as decisões mais recentes, especialmente a versão 4.
 
 ## 1. Finalidade do sistema
@@ -10,7 +14,9 @@ A solução é preparada para atender várias instituições, estados e escritó
 
 ## 2. Perfis e controle de acesso
 
-O sistema possui dois perfis:
+O sistema possui três perfis:
+
+- **Leitor:** consulta somente conteúdos publicados da própria instituição, incluindo PDFs e links. É o perfil padrão no cadastro de novos usuários, sem acesso à administração ou à gestão editorial.
 
 - **Admin:** administra a estrutura institucional, os usuários, os tipos de conteúdo, os responsáveis e as configurações. Também pode controlar a disponibilidade das publicações dentro de seu escopo.
 - **Publicador:** consulta conteúdos e gerencia publicações somente dos tipos de conteúdo pelos quais é responsável.

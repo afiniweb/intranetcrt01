@@ -13,6 +13,7 @@ import PaginaEscritorios from './escritorios/PaginaEscritorios.vue'
 import PaginaUsuarios from './usuarios/PaginaUsuarios.vue'
 import PaginaTiposConteudo from './tiposConteudo/PaginaTiposConteudo.vue'
 import PaginaPublicacoes from '../publicacoes/PaginaPublicacoes.vue'
+import PaginaMensagens from './mensagens/PaginaMensagens.vue'
 import PaginaParametrosSistema from './parametros/PaginaParametrosSistema.vue'
 
 const props = defineProps<{ usuario: UsuarioDto }>()
@@ -27,6 +28,7 @@ const opcoesCadastro: OpcaoAdministrativa[] = [
   { modulo: 'tipos-conteudo', titulo: 'Tipos de conteúdo', descricao: 'Defina os tipos de publicação e seus Publicadores responsáveis.', icone: 'pi pi-objects-column', cor: '#c2410c' },
 ]
 const opcoesGestao: OpcaoAdministrativa[] = [
+  { modulo: 'mensagens', titulo: 'Mensagens aos usuários', descricao: 'Publique avisos e acompanhe a ciência dos usuários.', icone: 'pi pi-megaphone', cor: '#7c3aed' },
   { modulo: 'publicacoes', titulo: 'Publicações', descricao: 'Consulte conteúdos ativos e desabilite ou reative o acesso quando necessário.', icone: 'pi pi-file-edit', cor: '#047857' },
   { modulo: 'parametros', titulo: 'Parâmetros do sistema', descricao: 'Configure limites de upload, notificações e preferências institucionais.', icone: 'pi pi-cog', cor: '#475569' },
 ]
@@ -36,7 +38,7 @@ const moduloSelecionado = ref('')
 const apiDisponivel = computed(() => health.value?.status === 'ok')
 async function checkHealth(): Promise<void> { try { health.value = await healthService.check() } catch { health.value = null } }
 function selecionarModulo(opcao: OpcaoAdministrativa): void {
-  if (['instituicoes', 'escritorios', 'usuarios', 'tipos-conteudo', 'publicacoes', 'parametros'].includes(opcao.modulo)) moduloAtivo.value = opcao.modulo
+  if (['instituicoes', 'escritorios', 'usuarios', 'tipos-conteudo', 'publicacoes', 'parametros', 'mensagens'].includes(opcao.modulo)) moduloAtivo.value = opcao.modulo
   else moduloSelecionado.value = opcao.titulo
 }
 onMounted(checkHealth)
@@ -58,6 +60,7 @@ onMounted(checkHealth)
       <PaginaUsuarios v-else-if="moduloAtivo === 'usuarios'" @voltar="moduloAtivo = ''" />
       <PaginaTiposConteudo v-else-if="moduloAtivo === 'tipos-conteudo'" @voltar="moduloAtivo = ''" />
       <PaginaPublicacoes v-else-if="moduloAtivo === 'publicacoes'" :usuario="props.usuario" @voltar="moduloAtivo = ''" />
+      <PaginaMensagens v-else-if="moduloAtivo === 'mensagens'" :usuario="props.usuario" @voltar="moduloAtivo = ''" />
       <PaginaParametrosSistema v-else-if="moduloAtivo === 'parametros'" :usuario="props.usuario" @voltar="moduloAtivo = ''" />
       <template v-else>
         <section class="apresentacao-pagina" aria-labelledby="titulo-administracao"><p class="identificador-secao">PAINEL ADMINISTRATIVO</p><h1 id="titulo-administracao">Área de administração</h1><p>Gerencie os cadastros e configurações da Intranet CRT-01.</p></section>

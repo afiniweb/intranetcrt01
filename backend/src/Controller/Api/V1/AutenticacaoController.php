@@ -17,7 +17,13 @@ final class AutenticacaoController extends AbstractController
     #[Route('/csrf', methods: ['GET'])]
     public function csrf(CsrfTokenManagerInterface $tokenManager): JsonResponse { return new JsonResponse(['token' => $tokenManager->getToken(CsrfApiSubscriber::TOKEN_ID)->getValue()]); }
     #[Route('/login', methods: ['POST'])]
-    public function login(): Response { return new JsonResponse(null, Response::HTTP_NO_CONTENT); }
+    public function login(\Symfony\Component\HttpFoundation\Request $request): Response {
+        $usuario = $this->getUser();
+        if ($usuario instanceof Usuario) {
+            $request->getSession()->remove('mensagens_dispensadas_'.$usuario->getId());
+            $request->getSession()->remove('mensagem_apresentada_'.$usuario->getId());
+        }
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT); }
     #[Route('/me', methods: ['GET'])]
     public function me(): JsonResponse { $usuario = $this->getUser(); if (!$usuario instanceof Usuario || !$usuario->isAtivo()) return new JsonResponse(['mensagem' => 'Não autenticado.'], Response::HTTP_UNAUTHORIZED); return new JsonResponse(UsuarioRespostaDto::daEntidade($usuario)->paraArray()); }
     #[Route('/logout', methods: ['POST'])]

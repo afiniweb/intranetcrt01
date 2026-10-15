@@ -1,7 +1,27 @@
 # Intranet CRT-01 — resumo para retomada
 
-**Atualizado em:** 17/08/2026  
+**Atualizado em:** 15/10/2026
 **Objetivo:** registrar o estado funcional e técnico do projeto para retomadas futuras.
+
+## Atualização: mensagens institucionais
+
+- Administração → Mensagens aos usuários: cadastro, pesquisa, edição, renovação, exclusão lógica e consulta de ciências por instituição.
+- Todos os perfis recebem avisos vigentes antes de acessar os módulos, com espera de 30 segundos validada também no servidor.
+- Ciência obrigatória exige aceite; mensagens opcionais podem ser dispensadas na sessão e reaparecem em novo login.
+- Aceite único por usuário e mensagem, com cópia do conteúdo. Edição, renovação e exclusão preservam ciências. Para exigir novo aceite, crie outra mensagem.
+- Migração `Version20261014220000` já refletida no banco local; schema Doctrine validado.
+- Em 15/10/2026 passaram 34 testes backend (91 asserções, nenhum ignorado), 5 testes frontend, tipos e build. Permanece o aviso de bundle acima de 500 kB. Não foi realizada inspeção visual no navegador.
+- Regras, API e execução dos testes: [Mensagens institucionais](./mensagens-institucionais.md).
+
+## Atualização: perfil Leitor
+
+- Perfis atuais: Admin, Publicador e Leitor.
+- Leitor é o padrão no formulário de novos usuários e recebe somente ROLE_USER.
+- Consulta conteúdos publicados e PDFs da própria instituição, incluindo outros escritórios.
+- Não acessa gestão editorial nem administração; listagem de gestão, criação, arquivamento e reativação são bloqueados no backend.
+- A troca de Publicador responsável por tipos ativos para Leitor exige substituição prévia.
+- Usuários existentes mantêm seus perfis; não há alteração de esquema do banco.
+- As seções históricas abaixo podem descrever versões anteriores do projeto.
 
 ## 1. Visão geral
 
@@ -227,4 +247,4 @@ O host não possui necessariamente as mesmas versões/dependências; prefira exe
 - O layout e as regras principais estão concentrados em `frontend/src/style.css`.
 - O diretório público existente para imagens é `frontend/public/images` (em inglês), e não `frontend/public/imagens`.
 - A última alteração visual foi validada com a verificação de tipos e o build do frontend; ambos concluíram com sucesso. Permanece apenas o aviso conhecido de bundle principal acima de 500 kB.
-- O repositório Git foi inicializado, porém todo o projeto ainda aparece como não rastreado e não há commit inicial. Antes de continuar por muito tempo, revisar os arquivos e criar o primeiro commit.
+- O repositório já possui commits. As alterações de perfil Leitor e mensagens institucionais permanecem locais, ainda sem commit.

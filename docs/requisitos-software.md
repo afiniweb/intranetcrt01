@@ -409,3 +409,16 @@ O Admin, respeitando seu escopo institucional, e o Publicador responsável pelo 
 - Rascunho, aguardando aprovação, aprovada/agendada e rejeitada deixam de ser estados do fluxo funcional.
 - Agendamento e expiração automática deixam de fazer parte do fluxo vigente; registros históricos permanecem preservados.
 - Notificações editoriais futuras deverão considerar criação imediata, desabilitação e reativação.
+
+
+## Atualização — mensagens institucionais (15/10/2026)
+
+Administradores gerenciam mensagens por instituição com título, texto, início, fim e ciência obrigatória ou opcional. Todos os perfis devem responder às pendências vigentes da própria instituição antes de acessar os módulos. A espera de 30 segundos é validada no servidor; mensagens obrigatórias exigem aceite explícito, e opcionais permitem dispensa apenas na sessão, reaparecendo em novo login.
+
+O aceite é único por usuário e mensagem e registra data e cópia do conteúdo aceito. Edição e renovação preservam aceites existentes; nova exigência de ciência requer nova mensagem. Exclusão lógica preserva o histórico consultável pelo Admin no escopo autorizado. Edições concorrentes e alterações durante a leitura são verificadas por versão. Veja [contrato e validação](./mensagens-institucionais.md).
+
+## Atualização — perfil Leitor (14/10/2026)
+
+Esta decisão amplia a definição anterior de dois perfis para três: Admin, Publicador e Leitor.
+Leitores autenticados consultam os conteúdos publicados da própria instituição, de todos os seus escritórios, e acessam seus PDFs e links. Não podem consultar a listagem de gestão, conteúdos arquivados ou de outras instituições, administrar cadastros, publicar, arquivar ou reativar conteúdos.
+Leitor é o padrão no formulário de novos usuários. Somente Publicadores ativos podem ser responsáveis por tipos de conteúdo; a conversão de um responsável para Leitor exige substituição prévia nos tipos ativos. Usuários existentes mantêm seus perfis.

@@ -28,6 +28,7 @@ httpClient.interceptors.request.use(async (configuracao: InternalAxiosRequestCon
 })
 
 httpClient.interceptors.response.use(undefined, async erro => {
+  if (erro.response?.status === 423 && erro.response?.data?.codigo === 'MENSAGEM_PENDENTE') window.dispatchEvent(new Event('mensagem-pendente'))
   const configuracao = erro.config as ConfiguracaoCsrf | undefined
   if (erro.response?.status === 403 && erro.response?.headers?.['x-csrf-error'] === '1' && configuracao && !configuracao._csrfRepetido) {
     configuracao._csrfRepetido = true; limparTokenCsrf(); configuracao.headers.set('X-CSRF-TOKEN', await obterTokenCsrf()); return httpClient(configuracao)

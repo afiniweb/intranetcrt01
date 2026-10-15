@@ -1,4 +1,4 @@
-export type PerfilUsuario = 'ADMIN' | 'PUBLICADOR'
+export type PerfilUsuario = 'ADMIN' | 'PUBLICADOR' | 'LEITOR'
 export interface UsuarioDto {
   id: number; instituicaoId: number; instituicaoNome: string; escritorioId: number; escritorioNome: string
   nome: string; email: string; perfil: PerfilUsuario; adminGlobal: boolean; ativo: boolean; criadoEm: string; atualizadoEm: string

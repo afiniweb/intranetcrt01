@@ -11,7 +11,7 @@ final readonly class SalvarUsuarioDto
         #[Assert\Positive(message: 'Selecione um escritório.')] public int $escritorioId,
         #[Assert\NotBlank(message: 'O nome é obrigatório.')] #[Assert\Length(max: 150)] public string $nome,
         #[Assert\NotBlank(message: 'O e-mail é obrigatório.')] #[Assert\Email(message: 'Informe um e-mail válido.')] #[Assert\Length(max: 180)] public string $email,
-        #[Assert\Choice(choices: ['ADMIN', 'PUBLICADOR'], message: 'Informe um perfil válido.')] public string $perfil,
+        #[Assert\Choice(choices: ['ADMIN', 'PUBLICADOR', 'LEITOR'], message: 'Informe um perfil válido.')] public string $perfil,
         public bool $adminGlobal,
         #[Assert\Length(min: 8, max: 72, minMessage: 'A senha deve possuir ao menos 8 caracteres.')] public ?string $senha,
         public bool $ativo = true,

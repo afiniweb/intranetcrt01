@@ -22,6 +22,7 @@ final readonly class PublicacaoService
     /** @return array{itens: list<array<string, mixed>>, total: int, pagina: int, porPagina: int} */
     public function listar(Usuario $usuario, string $busca, int $pagina, int $porPagina): array
     {
+        $this->validarPerfilGestao($usuario);
         $pagina = max(1, $pagina); $porPagina = min(100, max(1, $porPagina));
         $instituicaoId = $usuario->isAdminGlobal() ? null : $usuario->getInstituicao()->getId();
         $responsavelId = $usuario->getPerfil() === Usuario::PERFIL_PUBLICADOR ? $usuario->getId() : null;
@@ -51,9 +52,16 @@ final readonly class PublicacaoService
     public function reativar(int $id, Usuario $usuario): PublicacaoRespostaDto { return $this->alterarDisponibilidade($id, $usuario, true); }
     private function alterarDisponibilidade(int $id, Usuario $usuario, bool $reativar): PublicacaoRespostaDto
     {
+        $this->validarPerfilGestao($usuario);
         $item = $this->repository->find($id) ?? throw new NotFoundHttpException('Publicação não encontrada.'); $this->validarGestao($item, $usuario); $origem = $item->getStatus();
         try { $reativar ? $item->reativar() : $item->arquivar(); } catch (\DomainException $e) { throw new BadRequestHttpException($e->getMessage()); }
         $this->entityManager->persist(new TransicaoPublicacao($item, $usuario, $origem, $item->getStatus())); $this->entityManager->flush(); return PublicacaoRespostaDto::daEntidade($item);
+    }
+    private function validarPerfilGestao(Usuario $usuario): void
+    {
+        if (!in_array($usuario->getPerfil(), [Usuario::PERFIL_ADMIN, Usuario::PERFIL_PUBLICADOR], true)) {
+            throw new AccessDeniedHttpException('Este perfil permite somente consultar conteúdos publicados.');
+        }
     }
     private function validarGestao(Publicacao $item, Usuario $usuario): void
     {

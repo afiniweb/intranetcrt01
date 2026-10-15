@@ -22,13 +22,13 @@ const usuarios = ref<UsuarioDto[]>([]), instituicoes = ref<InstituicaoDto[]>([])
 const total = ref(0), pagina = ref(1), porPagina = ref(10), busca = ref('')
 const loading = ref(false), saving = ref(false), erro = ref('')
 const dialogForm = ref(false), dialogExclusao = ref(false), usuarioAtual = ref<UsuarioDto | null>(null)
-const formulario = ref<SalvarUsuarioDto>({ instituicaoId: 0, escritorioId: 0, nome: '', email: '', perfil: 'PUBLICADOR', adminGlobal: false, senha: null, ativo: true })
-const perfis: { label: string; value: PerfilUsuario }[] = [{ label: 'Admin', value: 'ADMIN' }, { label: 'Publicador', value: 'PUBLICADOR' }]
+const formulario = ref<SalvarUsuarioDto>({ instituicaoId: 0, escritorioId: 0, nome: '', email: '', perfil: 'LEITOR', adminGlobal: false, senha: null, ativo: true })
+const perfis: { label: string; value: PerfilUsuario }[] = [{ label: 'Leitor', value: 'LEITOR' }, { label: 'Admin', value: 'ADMIN' }, { label: 'Publicador', value: 'PUBLICADOR' }]
 const escritoriosDisponiveis = computed(() => escritorios.value.filter((item) => item.instituicaoId === formulario.value.instituicaoId && item.ativo))
 
 async function carregar(): Promise<void> { loading.value = true; erro.value = ''; try { const response = await usuarioService.listar(busca.value, pagina.value, porPagina.value); usuarios.value = response.itens; total.value = response.total } catch { erro.value = 'Não foi possível carregar os usuários.' } finally { loading.value = false } }
 async function carregarDependencias(): Promise<void> { try { const [a, b] = await Promise.all([instituicaoService.listar('', 1, 100), escritorioService.listar('', 1, 100)]); instituicoes.value = a.itens.filter((item) => item.ativo); escritorios.value = b.itens } catch { erro.value = 'Não foi possível carregar instituições e escritórios.' } }
-function abrirNovo(): void { usuarioAtual.value = null; const instituicaoId = instituicoes.value[0]?.id ?? 0; formulario.value = { instituicaoId, escritorioId: escritorios.value.find((item) => item.instituicaoId === instituicaoId && item.ativo)?.id ?? 0, nome: '', email: '', perfil: 'PUBLICADOR', adminGlobal: false, senha: '', ativo: true }; dialogForm.value = true }
+function abrirNovo(): void { usuarioAtual.value = null; const instituicaoId = instituicoes.value[0]?.id ?? 0; formulario.value = { instituicaoId, escritorioId: escritorios.value.find((item) => item.instituicaoId === instituicaoId && item.ativo)?.id ?? 0, nome: '', email: '', perfil: 'LEITOR', adminGlobal: false, senha: '', ativo: true }; dialogForm.value = true }
 function abrirEdicao(item: UsuarioDto): void { usuarioAtual.value = item; formulario.value = { instituicaoId: item.instituicaoId, escritorioId: item.escritorioId, nome: item.nome, email: item.email, perfil: item.perfil, adminGlobal: item.adminGlobal, senha: null, ativo: item.ativo }; dialogForm.value = true }
 async function salvar(): Promise<void> {
   if (!formulario.value.nome.trim() || !formulario.value.email.trim() || !formulario.value.instituicaoId || !formulario.value.escritorioId) { erro.value = 'Preencha nome, e-mail, instituição e escritório.'; return }
@@ -57,7 +57,7 @@ onMounted(async () => { await Promise.all([carregar(), carregarDependencias()]) 
       <template #empty>Nenhum usuário cadastrado.</template>
       <Column field="nome" header="Nome"><template #body="{ data }"><div class="celula-principal"><strong>{{ data.nome }}</strong><span>{{ data.email }}</span></div></template></Column>
       <Column field="instituicaoNome" header="Instituição" /><Column field="escritorioNome" header="Escritório" />
-      <Column header="Perfil"><template #body="{ data }"><Tag :value="data.perfil === 'ADMIN' ? (data.adminGlobal ? 'Admin global' : 'Admin') : 'Publicador'" :severity="data.perfil === 'ADMIN' ? 'info' : 'secondary'" /></template></Column>
+      <Column header="Perfil"><template #body="{ data }"><Tag :value="data.perfil === 'ADMIN' ? (data.adminGlobal ? 'Admin global' : 'Admin') : (data.perfil === 'PUBLICADOR' ? 'Publicador' : 'Leitor')" :severity="data.perfil === 'ADMIN' ? 'info' : 'secondary'" /></template></Column>
       <Column header="Situação"><template #body="{ data }"><Tag :value="data.ativo ? 'Ativo' : 'Inativo'" :severity="data.ativo ? 'success' : 'secondary'" /></template></Column>
       <Column header="Ações" body-class="acoes-tabela"><template #body="{ data }"><Button icon="pi pi-pencil" text rounded aria-label="Editar usuário" @click="abrirEdicao(data)" /><Button icon="pi pi-trash" text rounded severity="danger" aria-label="Excluir usuário" @click="confirmarExclusao(data)" /></template></Column>
     </DataTable>
