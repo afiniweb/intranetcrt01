@@ -57,8 +57,8 @@ IDADE=$(( $(date +%s) - $(stat -c %Y "$BACKUP/SHA256SUMS") ))
 (cd "$BACKUP" && sha256sum -c SHA256SUMS) || falhar 'Falha na integridade do backup.'
 
 log 'REGISTRANDO ESTADO ANTERIOR'
-DIR="$CONTROLE/pre-$VERSAO-$(date +%Y%m%d-%H%M%S)"
-mkdir -m 700 "$DIR"
+DIR="$(mktemp -d "$CONTROLE/pre-$VERSAO-$(date +%Y%m%d-%H%M%S)-XXXXXXXX")"
+chmod 700 "$DIR"
 ID_TENTATIVA="${DIR##*/}"
 cp compose.prod.yaml compose.hostgator.yaml "$DIR/"
 printf '%s\n' "$ATUAL" > "$DIR/commit-git-anterior"
